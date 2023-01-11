@@ -58,7 +58,7 @@ export async function play(bot: Bot, interaction: Interaction, _args?) {
 		}
 		// TODO: maybe switch to ytdl and not have to use the deno youtube library?
 		const result = await player.pushQuery(interaction.user.username, href);
-		if(parsed_url.href.indexOf("youtube.com") !== -1 || parsed_url.href.indexOf("youtu.be") !== -1 && result[0].title) {
+		if(result && parsed_url.href.indexOf("youtube.com") !== -1 || parsed_url.href.indexOf("youtu.be") !== -1 && result[0].title) {
 			await editOriginalInteractionResponse(bot, interaction.token, addedToQueueResponse(interaction, result[0].title));
 		}
 	} else {

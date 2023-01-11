@@ -1,0 +1,11 @@
+export const configs = {
+	project_root: "/permanent-waves",
+	discord_token: "",
+	allowed_text_channels: [
+		"server:bot-channel"
+	],
+	allowed_voice_channels: [
+		"server:general"
+	],
+	embed_color: 5639994
+};
