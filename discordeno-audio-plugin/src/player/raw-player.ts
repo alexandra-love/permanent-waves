@@ -1,4 +1,4 @@
-import { EventSource, wait } from "../../utils/mod.ts";
+import { EventSource } from "../../utils/mod.ts";
 import { ConnectionData } from "../connection-data.ts";
 import { FRAME_DURATION } from "../sample-consts.ts";
 import { Player } from "./types.ts";
@@ -32,35 +32,37 @@ export class RawPlayer implements Player {
 
   play() {
     try {
-    if (this.playing) {
-      return;
-    }
-    this.playing = true;
-
-    const inter = setDriftlessInterval(async () => {
-      if (this.playing === false) {
-        clearDriftless(inter);
-      }
-      if (this.#interrupt) {
-        const { done, value } = await this.#interrupt.next();
-        if (done) {
-          this.#interrupt = undefined;
-        } else {
-          this.conn.audio.trigger(value);
-          return;
-        }
-      }
-      const nextAudioIter = await this.#audio?.next();
-      if (nextAudioIter === undefined || nextAudioIter.done) {
-        this.#audio = undefined;
-        this.#doneSource.trigger();
-        await this.#onNext();
+      if (this.playing) {
         return;
       }
-      this.conn.audio.trigger(nextAudioIter.value);
-    }, FRAME_DURATION);
+      this.playing = true;
+
+      const inter = setDriftlessInterval(async () => {
+        if (this.playing === false) {
+          clearDriftless(inter);
+        }
+        if (this.#interrupt) {
+          const { done, value } = await this.#interrupt.next();
+          if (done) {
+            this.#interrupt = undefined;
+          } else {
+            this.conn.audio.trigger(value);
+            return;
+          }
+        }
+        const nextAudioIter = await this.#audio?.next();
+        if (nextAudioIter === undefined || nextAudioIter.done) {
+          this.#audio = undefined;
+          this.#doneSource.trigger();
+          this.playing = false;
+          await this.#onNext();
+          this.play();
+          return;
+        }
+        this.conn.audio.trigger(nextAudioIter.value);
+      }, FRAME_DURATION);
     } catch(err) {
-      console.log("error!!");
+      console.log("error while playing!!");
       console.error(err);
     }
   }
