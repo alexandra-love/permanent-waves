@@ -74,7 +74,7 @@ export async function sendAudioPacket(conn: ConnectionData, audio: Uint8Array) {
   incrementAudioMetaData(conn.context);
   try {
     const packet = addRTP(conn, audio);
-    const result = await conn.udpSocket.send(packet, {
+    await conn.udpSocket.send(packet, {
       ...conn.remote,
       transport: "udp",
     });
