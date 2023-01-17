@@ -30,7 +30,6 @@ export async function getYoutubeSource(query: string, added_by?: string) {
       const { id, title } = results[0];
       return createAudioSource(title!, async () => {
         try {
-          //const info = await ytdl.getInfo(id!);
           const stream = await ytdl(id!, {
             filter: supportedFormatFilter
           });

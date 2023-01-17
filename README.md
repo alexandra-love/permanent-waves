@@ -1,1 +1,1 @@
-**Permanent Waves** is a Discord music bot based on JasperVanEsveld's [Discordeno Audio Plugin](https://github.com/JasperVanEsveld/discordeno-audio-plugin). 
+**Permanent Waves** is a Discord music bot based on JasperVanEsveld's [Discordeno Audio Plugin](https://github.com/JasperVanEsveld/discordeno-audio-plugin). It's self-hosted and must be run with Deno's `--unstable` flag since it relies on the unstable DatagramConn interface.
