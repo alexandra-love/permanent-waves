@@ -1,4 +1,4 @@
-import { YouTube, ytDownload } from "../../deps.ts";
+import { YouTube, ytdl } from "../../deps.ts";
 import { bufferIter } from "../../utils/mod.ts";
 import { demux } from "../demux/mod.ts";
 import { createAudioSource, empty } from "./audio-source.ts";
@@ -28,14 +28,14 @@ export async function getYoutubeSource(query: string, added_by?: string) {
     const results = await YouTube.search(query, { limit: 1, type: "video" });
     if (results.length > 0) {
       const { id, title } = results[0];
-       return createAudioSource(title!, async () => {
+      return createAudioSource(title!, async () => {
         try {
-          const stream = await ytDownload(id!, {
-            mimeType: `audio/webm; codecs="opus"`,
+          //const info = await ytdl.getInfo(id!);
+          const stream = await ytdl(id!, {
+            filter: supportedFormatFilter
           });
           return bufferIter(demux(stream));
         } catch {
-          console.error("error");
           console.log(`Failed to play ${title}\n Returning empty stream`);
           return empty();
         }

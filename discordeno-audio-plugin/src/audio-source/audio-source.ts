@@ -9,7 +9,7 @@ export type AudioSource = {
   added_by?: string;
 };
 
-async function* empty() {}
+export async function* empty() {}
 
 export function createAudioSource(
   title: string,
