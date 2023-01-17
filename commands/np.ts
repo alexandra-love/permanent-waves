@@ -14,7 +14,7 @@ import { configs } from "../configs.ts"
 
 import { bot } from "../main.ts";
 import { getAllowedTextChannel } from "../utils.ts";
-import { ConnectionData } from "../discordeno-audio-plugin-main/mod.ts";
+import { ConnectionData } from "../discordeno-audio-plugin/mod.ts";
 
 export async function np(bot: Bot, interaction: Interaction) {
 	await sendInteractionResponse(bot, interaction.id, interaction.token, nowPlayingResponse(bot, interaction));

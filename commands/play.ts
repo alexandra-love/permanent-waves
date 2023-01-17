@@ -18,6 +18,9 @@ function alreadyPlayingResponse(bot: Bot, interaction: Interaction) {
 	return formatCallbackData(`The bot is already playing.
 		 Currently playing: **${player.nowPlaying.title}**, added by ${player.nowPlaying.added_by}`);
 }
+
+const badUrlResponse = formatCallbackData(`Bad URL, please enter a URL that starts with https://youtube.com or https://youtu.be.`);
+
 const emptyQueueResponse = formatCallbackData(`There's nothing in the queue to play right now.`);
 
 function nowPlayingResponse(bot: Bot, interaction: Interaction) {
@@ -48,17 +51,23 @@ export async function play(bot: Bot, interaction: Interaction, _args?) {
 	const player = bot.helpers.getPlayer(interaction.guildId);
 	await sendInteractionResponse(bot, interaction.id, interaction.token, waitingForResponse);
 
-	if(interaction.data.options) {
-		const parsed_url = new URL(interaction.data.options[0].value);
+	let parsed_url;
+	if(interaction!.data!.options) {
+		try {
+			parsed_url = new URL(interaction!.data!.options[0].value);
+		} catch {
+			await editOriginalInteractionResponse(bot, interaction.token, badUrlResponse);
+		}
+		
 		let href;
 		if(parsed_url.href.indexOf("?t=") !== -1) {
 			href = parsed_url.href.substring(0, parsed_url.href.indexOf("?"))
 		} else {
 			href = parsed_url.href;
 		}
-		// TODO: maybe switch to ytdl and not have to use the deno youtube library?
+
 		const result = await player.pushQuery(interaction.user.username, href);
-		if(result && parsed_url.href.indexOf("youtube.com") !== -1 || parsed_url.href.indexOf("youtu.be") !== -1 && result[0].title) {
+		if(result && result[0] && parsed_url.href.indexOf("youtube.com") !== -1 || parsed_url.href.indexOf("youtu.be") !== -1 && result[0].title) {
 			await editOriginalInteractionResponse(bot, interaction.token, addedToQueueResponse(interaction, result[0].title));
 		}
 	} else {

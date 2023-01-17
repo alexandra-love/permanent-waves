@@ -7,7 +7,6 @@ export function connectWebSocket(
   userId: bigint,
   guildId: bigint
 ) {
-  console.log("trying to connect the web socket");
   conn.context.ready = false;
   const { token, sessionId, endpoint } = conn.connectInfo;
   if (

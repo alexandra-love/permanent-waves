@@ -20,4 +20,4 @@ export { type Bot } from "https://deno.land/x/discordeno@17.0.1/bot.ts";
 export { type Interaction } from "https://deno.land/x/discordeno@17.0.1/transformers/interaction.ts";
 export { type ApplicationCommandOption, type ApplicationCommandOptionChoice, type Embed } from "https://deno.land/x/discordeno@17.0.1/transformers/mod.ts";
 export { leaveVoiceChannel } from "https://deno.land/x/discordeno@17.0.1/helpers/guilds/mod.ts";
-export { getConnectionData } from "./discordeno-audio-plugin-main/src/connection-data.ts";
+export { getConnectionData } from "./discordeno-audio-plugin/src/connection-data.ts";

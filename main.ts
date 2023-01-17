@@ -17,7 +17,7 @@ import { playCommand } from "./commands/play.ts";
 import { skipCommand } from "./commands/skip.ts";
 import { unloopCommand } from "./commands/unloop.ts";
 
-import { enableAudioPlugin } from "./discordeno-audio-plugin-main/mod.ts";
+import { enableAudioPlugin } from "./discordeno-audio-plugin/mod.ts";
 
 let sessionId = "";
 
