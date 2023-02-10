@@ -1,19 +1,7 @@
-import { YouTube, ytdl } from "../../deps.ts";
+import { YouTube, ytDownload } from "../../deps.ts";
 import { bufferIter } from "../../utils/mod.ts";
 import { demux } from "../demux/mod.ts";
 import { createAudioSource, empty } from "./audio-source.ts";
-
-function supportedFormatFilter(format: {
-  codecs: string;
-  container: string;
-  audioSampleRate?: string;
-}) {
-  return (
-    format.codecs === "opus" &&
-    format.container === "webm" &&
-    format.audioSampleRate === "48000"
-  );
-}
 
 export async function getYoutubeSources(added_by?: string, ...queries: string[]) {
   const sources = queries.map((query) => getYoutubeSource(query, added_by));
@@ -30,11 +18,12 @@ export async function getYoutubeSource(query: string, added_by?: string) {
       const { id, title } = results[0];
       return createAudioSource(title!, async () => {
         try {
-          const stream = await ytdl(id!, {
-            filter: supportedFormatFilter
+          const stream = await ytDownload(id!, {
+            mimeType: `audio/webm; codecs="opus"`,
           });
           return bufferIter(demux(stream));
         } catch {
+          console.error("error");
           console.log(`Failed to play ${title}\n Returning empty stream`);
           return empty();
         }

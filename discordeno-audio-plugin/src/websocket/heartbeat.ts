@@ -1,29 +1,37 @@
 import { VoiceOpcodes } from "../../deps.ts";
 import { setDriftlessTimeout } from "npm:driftless";
+import { ConnectionData } from "../mod.ts";
 
-function createHeartBeat(time: number) {
-  return JSON.stringify({
-    op: VoiceOpcodes.Heartbeat,
-    d: time,
-  });
+function sendHeartBeat(conn: ConnectionData) {
+  if (conn.context.lastHeart !== undefined) {
+    conn.context.missedHeart++;
+  }
+  conn.context.lastHeart = Date.now();
+  conn.ws?.send(
+    JSON.stringify({
+      op: VoiceOpcodes.Heartbeat,
+      d: conn.context.lastHeart,
+    })
+  );
 }
 
-export function sendHeart(ws: WebSocket, interval: number) {
+export function sendHeart(conn: ConnectionData, interval: number) {
   let last = Date.now();
-  let timestamp = 0;
-  const heartbeat = createHeartBeat(timestamp);
-  if (ws.readyState === WebSocket.OPEN) {
-    ws.send(heartbeat);
+  if (conn.ws?.readyState === WebSocket.OPEN) {
+    sendHeartBeat(conn);
   }
   let done = false;
   const repeatBeat = () => {
-    if (done || ws.readyState !== WebSocket.OPEN) {
+    if (done || conn.ws?.readyState !== WebSocket.OPEN) {
       return;
     }
-    timestamp += interval;
-    const heartbeat = createHeartBeat(timestamp);
+    if (conn.context.missedHeart >= 3) {
+      console.log("Missed too many heartbeats, attempting reconnect");
+      conn.ws?.close();
+      return;
+    }
     last = Date.now();
-    ws.send(heartbeat);
+    sendHeartBeat(conn);
     setDriftlessTimeout(repeatBeat, interval + (last - Date.now()));
   };
   setDriftlessTimeout(repeatBeat, interval + (last - Date.now()));

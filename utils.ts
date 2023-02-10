@@ -1,6 +1,6 @@
 import { ytdl } from "https://deno.land/x/ytdl_core@v0.1.1/mod.ts";
-import { Bot } from "https://deno.land/x/discordeno@17.0.1/bot.ts";
-import { connectToVoiceChannel } from "https://deno.land/x/discordeno@17.0.1/helpers/guilds/mod.ts";
+import { Bot } from "https://deno.land/x/discordeno@18.0.1/bot.ts";
+import { connectToVoiceChannel } from "https://deno.land/x/discordeno@18.0.1/helpers/guilds/mod.ts";
 import { configs } from "./configs.ts";
 import { getChannel, getChannels, getGuild, type BigString, type Embed, type InteractionCallbackData, type InteractionResponse } from "./deps.ts";
 
