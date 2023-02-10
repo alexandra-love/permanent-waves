@@ -79,24 +79,24 @@ export class QueuePlayer extends Queue<AudioSource> implements Player {
    * Interrupts the current song, resumes when finished
    * @param query Loads a universal song (local file or youtube search)
    */
-  async interruptQuery(query: string) {
-    const sources = await this.#loadSource(query as string);
+  async interruptQuery(guildId: bigint, query: string) {
+    const sources = await this.#loadSource(query as string, guildId);
     this.#rawPlayer.interrupt(await sources[0].data());
   }
 
-  async pushQuery(added_by?: string, ...queries: string[]) {
+  async pushQuery(guildId: bigint, added_by?: string, ...queries: string[]) {
     const sources = [];
     for (const query of queries) {
-      sources.push(...(await this.#loadSource(String(added_by), query as string)));
+      sources.push(...(await this.#loadSource(query as string, guildId, String(added_by))));
       this.push(...sources);
     }
     return sources;
   }
 
-  async unshiftQuery(...queries: string[]) {
+  async unshiftQuery(guildId: bigint, ...queries: string[]) {
     const sources = [];
     for (const query of queries) {
-      sources.push(...(await this.#loadSource(query as string)));
+      sources.push(...(await this.#loadSource(query as string, guildId)));
       this.unshift(...sources);
     }
     return sources;

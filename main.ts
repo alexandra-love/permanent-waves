@@ -30,7 +30,7 @@ export const bot = enableAudioPlugin(baseBot);
 
 bot.events.ready = async function (bot, payload) {
 	//await registerCommands(bot);
-	console.log(`${cyan("permanent waves")} is ready to go with session id ${yellow(payload.sessionId)}`);
+	console.log(`${cyan("permanent waves")} is ready to go`);
 	sessionId = payload.sessionId;
 }
 

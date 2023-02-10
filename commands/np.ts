@@ -54,7 +54,7 @@ function nowPlayingResponse(bot: Bot, interaction: Interaction) {
 	}
 }
 
-function nowPlayingMessage(bot: Bot, guildId: number) {
+function nowPlayingMessage(bot: Bot, guildId: BigInt) {
 	const player = bot.helpers.getPlayer(guildId);
 	return <CreateMessage>{
 		embeds: [<Embed>{

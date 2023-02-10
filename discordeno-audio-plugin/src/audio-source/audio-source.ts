@@ -6,6 +6,7 @@ export type AudioSource = {
   data: () =>
     | Promise<AsyncIterableIterator<Uint8Array>>
     | AsyncIterableIterator<Uint8Array>;
+  guildId: bigint;
   added_by?: string;
 };
 
@@ -16,6 +17,7 @@ export function createAudioSource(
   data: () =>
     | Promise<AsyncIterableIterator<Uint8Array>>
     | AsyncIterableIterator<Uint8Array>,
+  guildId: bigint,
   added_by?: string
 ): AudioSource {
   lastId++;
@@ -31,6 +33,7 @@ export function createAudioSource(
         return empty();
       }
     },
+    guildId,
     added_by
   };
 }

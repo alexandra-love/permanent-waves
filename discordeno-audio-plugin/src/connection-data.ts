@@ -9,7 +9,7 @@ export type BotData = {
   guildData: Map<bigint, ConnectionData>;
   udpSource: EventSource<[UdpArgs]>;
   bufferSize: number;
-  loadSource: (query: string, added_by?: string) => AudioSource[] | Promise<AudioSource[]>;
+  loadSource: (query: string, guild_id: bigint, added_by?: string) => AudioSource[] | Promise<AudioSource[]>;
 };
 
 export type ConnectionData = {

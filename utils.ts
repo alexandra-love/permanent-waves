@@ -1,37 +1,23 @@
-import { ytdl } from "https://deno.land/x/ytdl_core@v0.1.1/mod.ts";
 import { Bot } from "https://deno.land/x/discordeno@18.0.1/bot.ts";
-import { connectToVoiceChannel } from "https://deno.land/x/discordeno@18.0.1/helpers/guilds/mod.ts";
 import { configs } from "./configs.ts";
-import { getChannel, getChannels, getGuild, type BigString, type Embed, type InteractionCallbackData, type InteractionResponse } from "./deps.ts";
+import { 
+	getChannel, 
+	getChannels, 
+	getGuild, 
+	sendMessage, 
+	type BigString, 
+	type CreateMessage, 
+	type Embed, 
+	type InteractionCallbackData, 
+	type InteractionResponse 
+} from "./deps.ts";
+import { bot } from "./main.ts";
 
+import { ConnectionData } from "./discordeno-audio-plugin/mod.ts";
 
 export function channelIsAllowed(guild: string, channel: string) {
 	if(`${guild}:${channel}` in configs.allowed_text_channels) {
 		return true;
-	}
-
-	return false;
-}
-
-export async function download(url: string) {
-	try {
-		const stream = await ytdl(url, { filter: "audio" });
-
-		const chunks: Uint8Array[] = [];
-
-		for await (const chunk of stream) {
-		  chunks.push(chunk);
-		}
-
-		const videoDetails = stream.videoInfo.videoDetails;
-		const blob = new Blob(chunks);
-		const result = await Deno.writeFile(`${configs.project_root}/music/${videoDetails.videoId}.mp3`, new Uint8Array(await blob.arrayBuffer()));
-		return {
-			result: true,
-			message: `Now playing **${videoDetails.title}**`
-		};
-	} catch(err) {
-		console.error(err);
 	}
 
 	return false;
@@ -47,9 +33,9 @@ export async function ensureVoiceConnection(bot: Bot, guildId: BigString) {
 		}
 	}
 
-	const channel = await getChannel(bot, channelId);
+	await getChannel(bot, channelId);
 	try {
-		const connection = await bot.helpers.connectToVoiceChannel(guildId, channelId);
+		await bot.helpers.connectToVoiceChannel(guildId, channelId);
 	} catch(err) {
 		console.error(err);
 	}
@@ -94,3 +80,22 @@ export const waitingForResponse = <InteractionResponse>{
 		content: "waiting for response..."
 	}
 };
+
+function errorMessage(bot: Bot, guildId: bigint, message: string) {
+	const player = bot.helpers.getPlayer(guildId);
+	return <CreateMessage>{
+		embeds: [<Embed>{
+			color: configs.embed_color,
+			description: message
+		}]
+	}
+}
+
+export async function errorMessageCallback(guildId: bigint, message: string) {
+	const channel = await getAllowedTextChannel(bot, guildId);
+	await sendMessage(bot, channel.id, errorMessage(bot, guildId, message));
+}
+
+export function parseYoutubeId(url: string) {
+	return url.substring(url.indexOf("?")+3);
+}
